@@ -1,0 +1,165 @@
+{
+  "batch_size": 128,
+  "max_batches": 0,
+  "attachments_path_base": "/data/",
+  "eager_indexing_sparql_query": false,
+  "additive_indexes": true,
+  "persist_indexes": true,
+  "update_wait_interval_minutes": 0,
+  "automatic_index_updates": true,
+  "eager_indexing_groups": [
+    [
+      {
+        "name": "clean",
+        "variables": []
+      }
+    ],
+    [
+      {
+        "name": "public",
+        "variables": []
+      }
+    ]
+  ],
+  "prefixes": {
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "dct": "http://purl.org/dc/terms/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "ext": "http://mu.semte.ch/vocabularies/ext/",
+    "schema": "http://schema.org/"
+  },
+  "default_settings": {
+    "analysis": {
+      "analyzer": {
+        "custom-analyzer": {
+          "tokenizer": "standard",
+          "filter": [
+            "word_delimiter_graph",
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "types": [
+    {
+      "type": "concept",
+      "on_path": "concepts",
+      "rdf_type": "skos:Concept",
+      "properties": {
+        "prefLabel":  {
+          "via": "skos:prefLabel",
+          "type": "language-string"
+        },
+        "sourceDataset": "dct:source",
+        "tagLabels": "http://vocab-server.com/tagLabel"
+      },
+      "mappings": {
+        "properties": {
+          "sourceDataset": { "type": "keyword" },
+          "prefLabel": {
+            "properties": {
+              "default": { "type": "text", "analyzer": "custom-analyzer" },
+              "en": { "type": "text", "analyzer": "custom-analyzer" },
+              "nl": { "type": "text", "analyzer": "custom-analyzer" },
+              "fr": { "type": "text", "analyzer": "custom-analyzer" },
+              "de": { "type": "text", "analyzer": "custom-analyzer" }
+            }
+          },
+          "tagLabels": {
+            "type": "text",
+            "analyzer": "custom-analyzer"
+          }
+        }
+      }
+    },
+    {
+      "type": "document",
+      "on_path": "documents",
+      "rdf_type": "foaf:Document",
+      "properties": {
+        "title": "dc:title",
+        "description": "dc:description",
+        "status": "ext:status",
+        "priority": "ext:priority",
+        "author": {
+          "via": "dc:creator",
+          "rdf_type": "foaf:Person",
+          "properties": {
+            "fullname": "foaf:name"
+          }
+        }
+      },
+      "mappings": {
+        "properties": {
+          "title": { "type": "text", "analyzer": "custom-analyzer" },
+          "description": { "type": "text", "analyzer": "custom-analyzer" },
+          "status": { "type": "keyword" },
+          "priority": { "type": "integer" },
+          "author.fullname": { "type": "text", "analyzer": "custom-analyzer" }
+        }
+      }
+    },
+    {
+      "type": "creative-work",
+      "on_path": "creative-works",
+      "rdf_type": "schema:CreativeWork",
+      "properties": {
+        "name": "schema:name",
+        "description": "schema:description"
+      },
+      "mappings": {
+        "properties": {
+          "name": { "type": "text", "analyzer": "custom-analyzer" },
+          "description": { "type": "text", "analyzer": "custom-analyzer" }
+        }
+      }
+    },
+    {
+      "type": "report",
+      "on_path": "reports",
+      "rdf_type": "ext:Report",
+      "properties": {
+        "title": "dc:title",
+        "file": {
+          "via": "ext:file",
+          "attachment_pipeline": "attachment"
+        }
+      },
+      "mappings": {
+        "properties": {
+          "title": { "type": "text", "analyzer": "custom-analyzer" }
+        }
+      }
+    },
+    {
+      "type": "dossier",
+      "composite_types": ["document", "creative-work"],
+      "on_path": "dossiers",
+      "properties": [
+        {
+          "name": "name",
+          "mappings": {
+            "document": "title",
+            "creative-work": "name"
+          }
+        },
+        {
+          "name": "description",
+          "mappings": {
+            "document": "description",
+            "creative-work": "description"
+          }
+        }
+      ],
+      "mappings": {
+        "properties": {
+          "name": { "type": "text", "analyzer": "custom-analyzer" },
+          "description": { "type": "text", "analyzer": "custom-analyzer" }
+        }
+      }
+    }
+  ]
+}

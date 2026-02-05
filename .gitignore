@@ -1,0 +1,7 @@
+# -*- mode: gitignore; -*-
+data/db/*
+data/elasticsearch/*
+data/cache/*
+config/update-handler.store
+*~
+\#*\#
