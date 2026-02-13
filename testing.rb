@@ -1,8 +1,8 @@
 require 'net/http'
 require 'json'
 
-ELASTIC = 'http://localhost:8888'
-SPARQL = 'http://localhost:4027/sparql'
+ELASTIC = ENV.fetch('ELASTIC_URL', 'http://localhost:8888')
+SPARQL = ENV.fetch('SPARQL_URL', 'http://localhost:4027/sparql')
 
 def elastic(path, allowed_groups, test = nil)
   uri = URI(ELASTIC + path)

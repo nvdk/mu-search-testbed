@@ -32,7 +32,6 @@ Elasticsearch   Apache Tika
 ## Prerequisites
 
 - Docker & Docker Compose
-- Ruby (for running the test scripts)
 - A local clone of [mu-search](https://github.com/mu-semtech/mu-search) at `../` (the search service is built from source)
 
 ## Getting Started
@@ -43,7 +42,20 @@ Start the stack:
 docker compose up -d
 ```
 
-Wait for all services to be healthy, then run the tests:
+Wait for all services to be healthy, then run the tests via a Docker container on the compose network:
+
+```bash
+docker run --rm \
+  --network mu-search-testbed_default \
+  -e ELASTIC_URL=http://search:80 \
+  -e SPARQL_URL=http://database:8890/sparql \
+  -v "$(pwd)":/tests -w /tests \
+  ruby:3.2 ruby basic-tests.rb
+```
+
+Replace `basic-tests.rb` with any of the other test files as needed.
+
+If you have Ruby installed locally, you can also run the tests directly against the exposed ports:
 
 ```bash
 ruby basic-tests.rb

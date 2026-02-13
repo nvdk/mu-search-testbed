@@ -5,7 +5,7 @@ x-logging: &default-logging
     max-file: "3"
 services:
   delta-notifier:
-    image: nvdk/mu-delta-notifier:1.0.0
+    image: nvdk/mu-delta-notifier:1.1.0
     volumes:
       - ./config/delta:/config
     logging: *default-logging    
@@ -39,7 +39,7 @@ services:
       - ./data/cache:/cache
     logging: *default-logging
   elasticsearch:
-    image: semtech/mu-search-elastic-backend:1.2.0
+    image: semtech/mu-search-elastic-backend:latest
     volumes:
       - ./data/elasticsearch/:/usr/share/elasticsearch/data
     ulimits:
